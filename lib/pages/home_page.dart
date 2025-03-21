@@ -18,6 +18,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentCategory = 0; // Esta variable mantiene el índice de la categoría seleccionada.
 
+// Función para filtrar los productos según la categoría seleccionada
+List<ProductModel> getFilteredProducts(int currentCategory) {
+  // Obtenemos el nombre de la categoría seleccionada
+  String selectedCategory = categories[currentCategory].name;
+
+  // Filtramos los productos que corresponden a la categoría seleccionada
+  return products.where((product) => product.category == selectedCategory).toList();
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,9 +230,9 @@ class _HomePageState extends State<HomePage> {
               physics: const BouncingScrollPhysics(),
               child: Row(
                 children: [
-                  // Se genera la lista de productos
+                  // Se genera la lista de productos filtrados por la categoría seleccionada
                   ...List.generate(
-                      products.length,
+                      getFilteredProducts(currentCategory).length,
                       (index) => Padding(
                             padding: index == 0
                                 ? const EdgeInsets.only(left: 35, right: 20)
@@ -237,11 +247,12 @@ class _HomePageState extends State<HomePage> {
                                         pageBuilder: (context, animation,
                                                 secondaryAnimation) =>
                                             DetailPage(
-                                              product: products[index],  // Detalles del producto
+                                              product: getFilteredProducts(
+                                                      currentCategory)[index],  // Detalles del producto filtrado
                                             )));  // Navega a la página de detalles
                               },
                               child: ProductItem(
-                                product: products[index],  // Widget para mostrar el producto
+                                product: getFilteredProducts(currentCategory)[index],  // Producto filtrado
                               ),
                             ),
                           ))
@@ -283,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                             spreadRadius: 2,
                             blurRadius: 5,
                             offset: const Offset(0, 3))
-                      ]),
+                      ]), 
                   child: const Icon(Icons.search, color: white)),
               const Icon(
                 Icons.notifications_outlined, // Ícono de notificaciones
